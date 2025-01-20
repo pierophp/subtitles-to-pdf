@@ -68,6 +68,9 @@
     "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.12.0"
   },
+  "simple-git-hooks": {
+    "pre-commit": "bun lint-staged"
+  },
   "lint-staged": {
     "*": "eslint --fix"
   }
