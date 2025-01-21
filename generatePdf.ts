@@ -6,8 +6,8 @@ import { imageFilename } from "./helpers/imageFilename";
 import { parseSrt } from "./helpers/parseSrt";
 
 const movie = config.folder;
-const filePath = `movies/${movie}/subtitle.srt`;
-const pdfPath = `movies/${movie}/movie.pdf`;
+const filePath = `movies/${movie}/${movie}.srt`;
+const pdfPath = `movies/${movie}/${movie}.pdf`;
 const startTimeFilter = config.startTimeFilter;
 const endTimeFilter = config.endTimeFilter;
 
@@ -66,12 +66,12 @@ let content = `
         .comic-panel figcaption {
             padding: 5px;
             text-align: center;
-            font-weight: bold;            
+            font-weight: bold;
         }
       </style>
     </head>
     <body>
-      <h1>${title}</h1>          
+      <h1>${title}</h1>
       <div class="container">
 `;
 

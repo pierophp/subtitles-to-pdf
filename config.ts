@@ -6,9 +6,9 @@ type Config = {
   endTimeFilter: string;
 };
 export const config: Config = {
-  title: "Sonic 1",
-  folder: "sonic1",
-  url: "https://www.netflix.com/watch/80217006",
-  startTimeFilter: "00:00:00,000",
-  endTimeFilter: "01:31:00,000",
+  title: "Mario 1",
+  folder: "mario1",
+  url: "https://www.primevideo.com/detail/0LFLA2Y1RUVL2RE8DF35ACBOQK",
+  startTimeFilter: "00:02:47,368",
+  endTimeFilter: "00:10:00,000",
 };

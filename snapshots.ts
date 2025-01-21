@@ -5,6 +5,7 @@ import { existsSync } from "fs";
 import screenshot from "screenshot-desktop";
 import puppeteer from "puppeteer";
 import { convertTimestampToMilliseconds } from "./helpers/convertTimestamp";
+import { getStreamingPlatform } from "./helpers/getStreamingPlatform";
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -26,25 +27,42 @@ import { convertTimestampToMilliseconds } from "./helpers/convertTimestamp";
 
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  await page.evaluate(async () => {
-    if (!window.netflix?.appContext?.state?.playerApp) {
-      return;
-    }
+  const streamingPlatform = getStreamingPlatform(config.url);
 
-    const videoPlayer =
-      window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
+  await page.evaluate(
+    async (request: any) => {
+      const [platform] = request;
+      console.log("platform2", platform);
+      if (platform == "netflix") {
+        if (!window.netflix?.appContext?.state?.playerApp) {
+          return;
+        }
 
-    const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0];
-    const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId);
+        const videoPlayer =
+          window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
 
-    if (player) {
-      player.play();
-      player.pause();
-    }
-  });
+        const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0];
+        const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId);
+
+        if (player) {
+          player.play();
+          player.pause();
+        }
+      } else if (platform == "prime-video") {
+        document.querySelector(".fbl-play-btn").click();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        Array.from(document.querySelectorAll(".f1oe4mb3")).map((e) =>
+          e.remove()
+        );
+        document.querySelectorAll("video")[1].play();
+        document.querySelectorAll("video")[1].pause();
+      }
+    },
+    [streamingPlatform]
+  );
 
   const movie = config.folder;
-  const filePath = `movies/${movie}/subtitle.srt`;
+  const filePath = `movies/${movie}/${movie}.srt`;
   const startTimeFilter = config.startTimeFilter;
   const endTimeFilter = config.endTimeFilter;
 
@@ -59,26 +77,48 @@ import { convertTimestampToMilliseconds } from "./helpers/convertTimestamp";
     }
 
     await page.evaluate(
-      async (time) => {
-        if (!window.netflix?.appContext?.state?.playerApp) {
-          return;
-        }
+      async (request) => {
+        const [platform, time] = request;
 
-        const videoPlayer =
-          window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
+        if (platform === "netflix") {
+          if (!window.netflix?.appContext?.state?.playerApp) {
+            return;
+          }
 
-        const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0];
-        const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId);
+          const videoPlayer =
+            window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
 
-        if (player) {
-          player.seek(time);
-          await new Promise((resolve) => setTimeout(resolve, 200));
+          const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0];
+          const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId);
+
+          if (player) {
+            player.seek(time);
+            await new Promise((resolve) => setTimeout(resolve, 200));
+          }
+        } else if (platform === "prime-video") {
+          document.querySelectorAll("video")[1].currentTime = time / 1000;
+          try {
+            await document.querySelectorAll("video")[1].play();
+          } catch (e) {}
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          try {
+            await document.querySelectorAll("video")[1].pause();
+          } catch (e) {}
+          await new Promise((resolve) => setTimeout(resolve, 100));
         }
       },
-      [convertTimestampToMilliseconds(subtitle.startTime)]
+      [streamingPlatform, convertTimestampToMilliseconds(subtitle.startTime)]
+    );
+
+    console.log(
+      "time",
+      subtitle.startTime,
+      convertTimestampToMilliseconds(subtitle.startTime),
+      convertTimestampToMilliseconds(subtitle.startTime) / 1000
     );
 
     await screenshot({ filename });
   }
-  await browser.close();
+  // await browser.close();
 })();

@@ -29,17 +29,18 @@ export async function parseSrt(
 
     let subtitleText = lines.slice(2).join(" ");
 
-    subtitleText = subtitleText.replace(/\[.*?\]/g, "").trim();
+    subtitleText = subtitleText.replace(/\[.*?\]/g, "");
+    subtitleText = subtitleText.replace(/\(.*?\)/g, "");
+    subtitleText = subtitleText.replaceAll("*", "");
+    subtitleText = subtitleText.replaceAll("-", " ");
+    subtitleText = subtitleText.trim();
 
     if (!subtitleText) {
       continue;
     }
 
-    if (subtitleText === "-") {
-      continue;
-    }
-
-    if (subtitleText === "- -") {
+    const ignoreText = ["-", "- -", "*"];
+    if (ignoreText.includes(subtitleText)) {
       continue;
     }
 
