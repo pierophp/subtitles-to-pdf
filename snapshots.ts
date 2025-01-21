@@ -111,14 +111,7 @@ import { getStreamingPlatform } from "./helpers/getStreamingPlatform";
       [streamingPlatform, convertTimestampToMilliseconds(subtitle.startTime)]
     );
 
-    console.log(
-      "time",
-      subtitle.startTime,
-      convertTimestampToMilliseconds(subtitle.startTime),
-      convertTimestampToMilliseconds(subtitle.startTime) / 1000
-    );
-
     await screenshot({ filename });
   }
-  // await browser.close();
+  await browser.close();
 })();
