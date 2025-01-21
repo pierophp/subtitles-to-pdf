@@ -17,6 +17,7 @@
   "homepage": "https://github.com/pierophp/subtitles-to-pdf#readme",
   "description": "",
   "dependencies": {
+    "@lesjoursfr/html-to-epub": "^4.4.2",
     "puppeteer": "^24.1.0",
     "screenshot-desktop": "^1.15.1",
     "sharp": "^0.33.5",

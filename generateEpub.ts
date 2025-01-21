@@ -1,13 +1,14 @@
+import { EPub, EpubOptions } from "@lesjoursfr/html-to-epub";
 import { readFile } from "fs/promises";
-import puppeteer from "puppeteer";
 import { config } from "./config";
-import { convertTimestampToSeconds } from "./helpers/convertTimestamp";
 import { imageFilename } from "./helpers/imageFilename";
 import { parseSrt } from "./helpers/parseSrt";
 
+import { convertTimestampToSeconds } from "./helpers/convertTimestamp";
+
 const movie = config.folder;
 const filePath = `movies/${movie}/subtitle.srt`;
-const pdfPath = `movies/${movie}/movie.pdf`;
+const epubPath = `movies/${movie}/movie.epub`;
 const startTimeFilter = config.startTimeFilter;
 const endTimeFilter = config.endTimeFilter;
 
@@ -97,12 +98,17 @@ content += `
 </body>
 </html>
 `;
-async function generatePDF() {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.setContent(content, { waitUntil: "load" });
-  await page.pdf({ path: pdfPath, format: "A4" });
-  await browser.close();
-}
 
-generatePDF();
+const options: EpubOptions = {
+  title: config.title,
+  description: config.title,
+  content: [
+    {
+      title: config.title,
+      data: content,
+    },
+  ],
+};
+
+const epub = new EPub(options, epubPath);
+await epub.render();
