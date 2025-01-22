@@ -1,14 +1,11 @@
-type Config = {
+import { config as movieConfig } from "./movies/sonic1/config";
+
+export type Config = {
   title: string;
   url: string;
   folder: string;
   startTimeFilter: string;
   endTimeFilter: string;
 };
-export const config: Config = {
-  title: "Mario 1",
-  folder: "mario1",
-  url: "https://www.primevideo.com/detail/0LFLA2Y1RUVL2RE8DF35ACBOQK",
-  startTimeFilter: "00:02:47,368",
-  endTimeFilter: "01:33:20,000",
-};
+
+export const config: Config = movieConfig;
