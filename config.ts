@@ -10,5 +10,5 @@ export const config: Config = {
   folder: "mario1",
   url: "https://www.primevideo.com/detail/0LFLA2Y1RUVL2RE8DF35ACBOQK",
   startTimeFilter: "00:02:47,368",
-  endTimeFilter: "00:20:00,000",
+  endTimeFilter: "01:33:20,000",
 };
